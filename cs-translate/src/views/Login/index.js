@@ -1,86 +1,147 @@
-import React, { Component } from 'react'
+import React,{useState} from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
+import Box from '@material-ui/core/Box';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import Container from '@material-ui/core/Container';
 import { auth } from '../../firebase'
-import { NavLink } from 'react-router-dom'
+import { Navigate, NavLink } from 'react-router-dom'
 
-class ExampleLogIn extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      email: '',
-      password: '',
-      currentUser: null
-    }
-  }
-  onSubmit = e => {
-    const { email, password } = this.state
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" >
+        CsTranslate
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+export default function SignIn() {
+  const classes = useStyles();
+  const [email, setemail] = useState()
+  const [password, setpassword] = useState()
+  const [currentUser, setcurrentUser] = useState()
+
+
+
+    const HandleonSubmit = e => {
+      console.log('hello world')
     e.preventDefault()
     auth
       .signInWithEmailAndPassword(email, password)
       .then(res => {
         console.log(res.user)
-        this.setState({
-          currentUser: res.user
-        })
+        setcurrentUser(res.user)
       })
       .catch(err => console.log(err))
   }
 
-  onChange = e => {
-    const { name, value } = e.target
-    this.setState({
-      [name]: value
-    })
-  }
-
-  render() {
-    const { currentUser } = this.state
-
-    if (currentUser) {
-      return (
-        <div>
-          <p style={{ color: 'black' }}>Hello {currentUser.email}</p>
-          {/* <button onClick={this.logout}>Logout</button> */}
-        </div>
-      )
+      if (currentUser) {
+        return <Navigate to="/trans" state={`${currentUser.email}`} />
     }
-    return (
-      <form onSubmit={this.onSubmit}>
-        <h3>Sign In</h3>
-
-        <div>
-          <label>Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            placeholder="Enter email"
+  return (
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
             name="email"
-            onChange={this.onChange}
+            autoComplete="email"
+            autoFocus
+            onChange={e=>{
+              setemail(e.target.value)
+            }}
           />
-        </div>
-
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Enter password"
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
             name="password"
-            onChange={this.onChange}
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={e=>{
+              setpassword(e.target.value)
+            }}
           />
-        </div>
+          <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
+          />
+          <Button
+            type="button"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+            onClick={e=>{
+              HandleonSubmit(e)
+            }}
+          >
+            Sign In
+          </Button>
+          <Grid container>
+            <Grid item xs>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Grid>
+            <Grid item>
+              <Link href="#" variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
 
-        <button type="submit" className="button1">
-          Sign In
-        </button>
-        <p className="have-an-account text-left">
-          Do not have ab account?{' '}
-          <NavLink to="/sign-up" activeClassName="is-active">
-            sign-up
-          </NavLink>
-        </p>
-      </form>
-    )
-  }
+      </div>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </Container>
+  );
 }
-
-export default ExampleLogIn

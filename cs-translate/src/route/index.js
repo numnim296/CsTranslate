@@ -1,23 +1,25 @@
 import React from 'react'
-import { Switch, Route } from 'react-router'
+import { Route } from 'react-router'
 import LogIn from '../views/Login'
 import MainPage from '../views/Translate'
 
+// import { Navigate } from 'react-router-dom';
 
 
-const Routing = () => {
-  return (
-    <Switch>
-      <Route exact path="/" component={LogIn} />
-      {/* <Route path="/profile" component={Profile} /> */}
-      {/* <Route path="*" component={LogIn} /> */}
-      {/* <Route exact path="/" component={Example}/> */}
-      <Route exact path="/login" component={LogIn} />
-      <Route exact path="/trans" component={MainPage} />
-      <Route exact path="*" component={MainPage} />
-      
-    </Switch>
-  )
-}
+const routes = [
 
-export default Routing
+  {
+    path: '/',
+    // element: <LandingMainLayout/>,
+    children: [
+      { path: '/', element: <LogIn/>},
+      { path: 'login', element: <LogIn/>},
+      { path: 'trans', element: <MainPage/>},
+      // { path: '*', element: <Navigate to="/404" /> },
+    ]
+  },
+ 
+];
+
+
+export default routes;
