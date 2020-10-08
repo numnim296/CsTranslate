@@ -3,8 +3,7 @@ import routes from './route'
 import {
     useRoutes,
     BrowserRouter as Router,
-    Route,
-    Routes,
+   
 } from 'react-router-dom'
 import { ThemeProvider } from '@material-ui/core'
 

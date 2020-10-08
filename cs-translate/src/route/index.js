@@ -1,5 +1,4 @@
 import React from 'react'
-import { Route } from 'react-router'
 import LogIn from '../views/Login'
 import SignUp from '../views/SignUp';
 import MainPage from '../views/Translate'

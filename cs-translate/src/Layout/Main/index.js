@@ -1,7 +1,6 @@
 import React ,{useState}from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import {Link} from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -12,7 +11,6 @@ import * as firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
-import { LocalDiningOutlined } from '@material-ui/icons';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -38,8 +36,7 @@ export default function MainAppBar() {
 
 let jwtToken = firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-      user.getIdToken().then(function(idToken) {  // <------ Check this line
-          console.log('idtoken',idToken)// It shows the Firebase token now
+      user.getIdToken().then(function(idToken) {
           settokenUser(idToken)
           return idToken;
       });
@@ -61,7 +58,7 @@ const logOut = ()=>{
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            News
+            CsTranslate
           </Typography>
           {tokenUser===""?<Button color="inherit" onClick={logIn}>
               Login

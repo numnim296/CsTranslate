@@ -13,8 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { auth } from '../../firebase'
-import { Navigate, NavLink,useNavigate } from 'react-router-dom'
-import * as firebase from 'firebase/app'
+import { Navigate,useNavigate } from 'react-router-dom'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
@@ -62,12 +61,10 @@ export default function SignIn() {
 
 
     const HandleonSubmit = e => {
-      console.log('hello world')
     e.preventDefault()
     auth
       .signInWithEmailAndPassword(email, password)
       .then(res => {
-        console.log(res.user)
         setcurrentUser(res.user)
       })
       .catch(err => console.log(err))

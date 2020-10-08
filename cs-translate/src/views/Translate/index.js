@@ -1,28 +1,23 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 import {
     TextField,
     Button,
     Typography,
     Box,
     Grid,
-    Link,
 } from '@material-ui/core'
 import Popover from '@material-ui/core/Popover'
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state'
 import { useNavigate, useLocation } from 'react-router'
-import { Navigate } from 'react-router-dom'
 import * as firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 
-import Fab from '@material-ui/core/Fab'
-import AddIcon from '@material-ui/icons/Add'
 import NavigationIcon from '@material-ui/icons/Navigation'
-import Zoom from '@material-ui/core/Zoom'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -52,11 +47,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-const API_URL =
-    'https://translation.googleapis.com/language/translate/v2?key=AIzaSyCl0JfWdDiBZO30bbgfaGcJ5ys4gX_zqZI&q=hello, how are you? &target=th&source=en'
 
 function MainPage() {
-    const theme = useTheme()
     const classes = useStyles()
     const [traned, setTraned] = useState('')
     const [tran, setTran] = useState('')
@@ -67,11 +59,9 @@ function MainPage() {
     const location = useLocation()
 
     const navigate = useNavigate();
-    console.log('location => ', location.state)
 
     function fetchAPI(e) {
         e.preventDefault()
-        console.log('click submit', tran)
         const fetchApi = async () => {
             const API_URL = `https://translation.googleapis.com/language/translate/v2?key=AIzaSyCl0JfWdDiBZO30bbgfaGcJ5ys4gX_zqZI&q=${tran}&target=${Ltarget}&source=${Lsource}`
             const response = await axios.get(API_URL)
@@ -136,23 +126,9 @@ function MainPage() {
 
                         <Popover
                             {...bindPopover(popupState)}
-                            // anchorOrigin={{
-                            //     vertical: 'bottom',
-                            //     horizontal: 'center',
-                            // }}
-                            // transformOrigin={{
-                            //     vertical: 'top',
-                            //     horizontal: 'center',
-                            // }}
                         >
                             <Box p={20}>
                                 <Grid container spacing={3}>
-                                    {/* <Grid item xs={6} sm={3}>
-                                        <Button onClick={e=>{
-                                          popupState.close()
-                                          LsourceSet('th')
-                                          }}>thai</Button>
-                                    </Grid> */}
                                     <Grid item xs={6} sm={3}>
                                         <Button
                                             onClick={(e) => {
