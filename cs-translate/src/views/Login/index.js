@@ -13,7 +13,11 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { auth } from '../../firebase'
-import { Navigate, NavLink } from 'react-router-dom'
+import { Navigate, NavLink,useNavigate } from 'react-router-dom'
+import * as firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
+import 'firebase/storage'
 
 function Copyright() {
   return (
@@ -53,7 +57,8 @@ export default function SignIn() {
   const [email, setemail] = useState()
   const [password, setpassword] = useState()
   const [currentUser, setcurrentUser] = useState()
-
+  const navigate = useNavigate()
+  let jwtToken
 
 
     const HandleonSubmit = e => {
@@ -69,7 +74,7 @@ export default function SignIn() {
   }
 
       if (currentUser) {
-        return <Navigate to="/trans" state={`${currentUser.email}`} />
+        return <Navigate to="/trans" state={`${currentUser.uid}`} />
     }
   return (
     <Container component="main" maxWidth="xs">
@@ -132,7 +137,12 @@ export default function SignIn() {
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
+            <Link
+                                variant="body2"
+                                onClick={() => {
+                                    navigate('/app/signup')
+                                }}
+                            >
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>

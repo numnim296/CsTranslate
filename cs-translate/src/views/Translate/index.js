@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 
-import { makeStyles } from '@material-ui/core/styles'
-import { TextField, Button, Typography, Box, Grid } from '@material-ui/core'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
+import {
+    TextField,
+    Button,
+    Typography,
+    Box,
+    Grid,
+    Link,
+} from '@material-ui/core'
 import Popover from '@material-ui/core/Popover'
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state'
-import { useNavigate,useLocation } from 'react-router'
+import { useNavigate, useLocation } from 'react-router'
+import { Navigate } from 'react-router-dom'
+import * as firebase from 'firebase/app'
+import 'firebase/firestore'
+import 'firebase/auth'
+import 'firebase/storage'
 
+import Fab from '@material-ui/core/Fab'
+import AddIcon from '@material-ui/icons/Add'
+import NavigationIcon from '@material-ui/icons/Navigation'
+import Zoom from '@material-ui/core/Zoom'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -17,11 +33,22 @@ const useStyles = makeStyles((theme) => ({
     },
     buttonTran: {
         // backgroundColor: '#00b0ff',
-        marginTop: theme.spacing(5),
-        marginBottom: theme.spacing(5),
+        marginTop: theme.spacing(3),
+        marginBottom: theme.spacing(3),
     },
     TextFieldclass: {
-        marginTop: theme.spacing(5),
+        marginTop: theme.spacing(3),
+    },
+    extendedIcon: {
+        marginRight: theme.spacing(1),
+    },
+    position: {
+        marginTop: theme.spacing(3),
+    },
+    fab: {
+        position: 'absolute',
+        bottom: theme.spacing(10),
+        right: theme.spacing(2),
     },
 }))
 
@@ -29,6 +56,7 @@ const API_URL =
     'https://translation.googleapis.com/language/translate/v2?key=AIzaSyCl0JfWdDiBZO30bbgfaGcJ5ys4gX_zqZI&q=hello, how are you? &target=th&source=en'
 
 function MainPage() {
+    const theme = useTheme()
     const classes = useStyles()
     const [traned, setTraned] = useState('')
     const [tran, setTran] = useState('')
@@ -37,7 +65,9 @@ function MainPage() {
     const [FullTarget, setFullTarget] = useState('Thai')
     const [FullSource, setFullSource] = useState('English')
     const location = useLocation()
-    console.log('location => ',location)
+
+    const navigate = useNavigate();
+    console.log('location => ', location.state)
 
     function fetchAPI(e) {
         e.preventDefault()
@@ -45,25 +75,45 @@ function MainPage() {
         const fetchApi = async () => {
             const API_URL = `https://translation.googleapis.com/language/translate/v2?key=AIzaSyCl0JfWdDiBZO30bbgfaGcJ5ys4gX_zqZI&q=${tran}&target=${Ltarget}&source=${Lsource}`
             const response = await axios.get(API_URL)
-            console.log(
+
+            setTraned(
                 response.data['data']['translations'][0]['translatedText']
             )
-            setTraned(
+            addDataHistory(
                 response.data['data']['translations'][0]['translatedText']
             )
         }
 
         fetchApi()
     }
+    function toHistory(){
+        navigate('/history',{state:`${location.state}`})
+
+    }
 
     function handleOnChange(e) {
         setTran(e.target.value)
     }
-
-    const [value, setValue] = React.useState('Controlled')
+    function addDataHistory(trancomplete) {
+        firebase
+            .firestore()
+            .collection('historyTranslate')
+            .doc()
+            .set({
+                destinationLanguage: trancomplete,
+                sourceLanguage: tran,
+                userID: location.state,
+            })
+            .then(function () {
+                console.log('add history complete')
+            })
+            .catch(function (error) {
+                console.error('Error writing document: ', error)
+            })
+    }
 
     return (
-        <div>
+        <div className={classes.position}>
             <PopupState variant="popover" popupId="demo-popup-popover">
                 {(popupState) => (
                     <div>
@@ -1330,7 +1380,7 @@ function MainPage() {
                         id="outlined-multiline-static"
                         label="Text Input"
                         multiline
-                        rows={10}
+                        rows={8}
                         variant="outlined"
                         fullWidth
                         onChange={(e) => {
@@ -2600,13 +2650,23 @@ function MainPage() {
                         id="outlined-multiline-static"
                         label="Text Output"
                         multiline
-                        rows={10}
+                        rows={8}
                         variant="outlined"
                         fullWidth
                         value={traned}
                     />
                 </div>
             </form>
+            <Button
+                onClick={toHistory}
+                variant="contained"
+                color="primary"
+                size="large"
+                className={classes.fab}
+                startIcon={<NavigationIcon />}
+            >
+                History
+            </Button>
         </div>
     )
 }
