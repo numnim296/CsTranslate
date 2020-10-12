@@ -4,6 +4,7 @@ import SignUp from '../views/SignUp';
 import MainPage from '../views/Translate'
 import MainAppBar from '../Layout/Main'
 import History from '../views/History'
+import Setting from '../views/Setting'
 
 // import { Navigate } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ const routes = [
       { path: '/', element: <MainPage/>},
       { path: 'history', element: <History/>},
       { path: 'trans', element: <MainPage/>},
+      { path: 'setting', element: <Setting/>},
       // {path:'signup',element: <SignUp/>}
       // { path: '*', element: <Navigate to="/404" /> },
     ]

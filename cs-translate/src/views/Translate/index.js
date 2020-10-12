@@ -57,8 +57,8 @@ function MainPage() {
     const [FullTarget, setFullTarget] = useState('Thai')
     const [FullSource, setFullSource] = useState('English')
     const location = useLocation()
-
     const navigate = useNavigate();
+    console.log("kjki",location.state)
 
     function fetchAPI(e) {
         e.preventDefault()
