@@ -76,7 +76,6 @@ export default function SignInSide() {
                             status:"user"
                         })
                         .then(function() {
-                            setcurrentUser(res.user)
                             firebase
                             .firestore()
                             .collection('users')
@@ -84,8 +83,16 @@ export default function SignInSide() {
                             .get()
                             .then(function (doc) {
                                 if (doc.exists) {
-                                    setstatus(doc.data().status)
+                                    setcurrentUser(res.user)
+                                    if(res.user.uid === 'lxqKQjgbVXe1a8Htm8yKNdlzK6Z2'){
+                                        setstatus("admin")
+                                        localStorage.setItem('user', "admin")
+                                        
+                                    }else{
+                                        setstatus(doc.data().status)
                                     localStorage.setItem('user', doc.data().status)
+                                    }
+
                                 } else {
                                     console.log('No such document!')
                                 }

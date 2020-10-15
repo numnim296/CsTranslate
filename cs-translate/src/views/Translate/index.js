@@ -152,8 +152,8 @@ if(localStorage.user===undefined || localStorage.user==="user"){
             <PopupState variant="popover" popupId="demo-popup-popover">
                 {(popupState) => (
                     <div>
-                        <Grid container spacing={0}>
-                            <Grid item xs={1} sm={1}>
+                        <Grid container spacing={3}>
+                            <Grid item xs={2} sm={3} md={1} >
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -162,7 +162,7 @@ if(localStorage.user===undefined || localStorage.user==="user"){
                                     Source
                                 </Button>
                             </Grid>
-                            <Grid item xs={3} sm={3}>
+                            <Grid item xs={2} sm={3} md={1} >
                                 <Button variant="outlined" color="primary">
                                     {FullSource}
                                 </Button>
@@ -1423,7 +1423,7 @@ if(localStorage.user===undefined || localStorage.user==="user"){
                 {(popupState) => (
                     <div>
                         <Grid container spacing={0}>
-                            <Grid item xs={1} sm={1}>
+                        <Grid item xs={2} sm={3} md={1} >
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -1432,7 +1432,7 @@ if(localStorage.user===undefined || localStorage.user==="user"){
                                     Target
                                 </Button>
                             </Grid>
-                            <Grid item xs={3} sm={3}>
+                            <Grid item xs={2} sm={3} md={1} >
                                 <Button variant="outlined" color="primary">
                                     {FullTarget}
                                 </Button>
@@ -2688,15 +2688,15 @@ if(localStorage.user===undefined || localStorage.user==="user"){
                 History
             </Button>}
             
-
-      <Snackbar
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={transition}
-        message={suggess}
-        key={transition ? transition.name : ''}
-      />
-            
+{
+    localStorage.user !== undefined?<Snackbar
+    open={open}
+    onClose={handleClose}
+    TransitionComponent={transition}
+    message={suggess}
+    key={transition ? transition.name : ''}
+  />:null
+}
             
         </div>
     )
