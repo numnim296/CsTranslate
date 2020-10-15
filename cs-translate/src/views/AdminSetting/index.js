@@ -33,7 +33,6 @@ export default function Setting() {
     // const userid = location.state
     const [userid, setuserid] = useState("")
     const storage = firebase.storage()
-    console.log('ggg', userid)
     const [imageUrl, setimageUrl] = useState("")
     const [imageName, setimageName] = useState("")
     const [dis, setDis] = useState(true);

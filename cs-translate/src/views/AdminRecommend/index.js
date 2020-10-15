@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import { makeStyles, TextField, Button, Typography } from '@material-ui/core'
 import socketIOClient from 'socket.io-client'
 

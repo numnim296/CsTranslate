@@ -5,13 +5,11 @@ import {
     BrowserRouter as Router,
    
 } from 'react-router-dom'
-import { ThemeProvider } from '@material-ui/core'
+// import { ThemeProvider } from '@material-ui/core'
+// import theme from "../src/theme";
 
 function App() {
     const routing = useRoutes(routes)
-    // return <ThemeProvider>
-    //   {routing}
-    //   </ThemeProvider>
 return <div>{routing}</div>
 }
 

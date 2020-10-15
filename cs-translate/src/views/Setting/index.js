@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Setting() {
     const classes = useStyles()
     const location = useLocation()
-    // const userid = location.state
     const [userid, setuserid] = useState("")
     const storage = firebase.storage()
     console.log('ggg', userid)

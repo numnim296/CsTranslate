@@ -58,7 +58,6 @@ function MainPage() {
     const [FullSource, setFullSource] = useState('English')
     const location = useLocation()
     const navigate = useNavigate();
-    console.log("adminnnn",location.state)
 
     function fetchAPI(e) {
         e.preventDefault()

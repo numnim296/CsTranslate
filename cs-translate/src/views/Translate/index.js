@@ -67,7 +67,6 @@ function MainPage() {
     const [suggess, setsuggess] = useState("")
     const userId = location.state
     const token = localStorage.user;
-    console.log("hello",token)
     const [uid, setuid] = useState("")
 
   const handleClick = (Transition) => () => {
@@ -129,7 +128,6 @@ function MainPage() {
             setsuggess(messageNew)
             setTransition(() => TransitionUp);
             setOpen(true);
-            console.log('แจ้งเตือน', messageNew)
         })
 
         return () => {
@@ -2678,6 +2676,7 @@ if(localStorage.user===undefined || localStorage.user==="user"){
                     />
                 </div>
             </form>
+            {localStorage.user === undefined?null:
             <Button
                 onClick={toHistory}
                 variant="contained"
@@ -2687,7 +2686,8 @@ if(localStorage.user===undefined || localStorage.user==="user"){
                 startIcon={<NavigationIcon />}
             >
                 History
-            </Button>
+            </Button>}
+            
 
       <Snackbar
         open={open}

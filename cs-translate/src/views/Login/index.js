@@ -1,171 +1,141 @@
-import React, { useState } from 'react'
-import Avatar from '@material-ui/core/Avatar'
-import Button from '@material-ui/core/Button'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
-import Link from '@material-ui/core/Link'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
-import Container from '@material-ui/core/Container'
-import { auth } from '../../firebase'
-import { Navigate, useNavigate } from 'react-router-dom'
+import React,{useState} from 'react';
+import Avatar from '@material-ui/core/Avatar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Link from '@material-ui/core/Link';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import { Navigate } from 'react-router-dom'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
 import * as firebase from 'firebase/app'
+import GoogleButton from 'react-google-button'
 
 function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit">CsTranslate</Link> {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    )
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        CsTranslate Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
 }
 
 const useStyles = makeStyles((theme) => ({
-    paper: {
-        marginTop: theme.spacing(8),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-        width: '100%', // Fix IE 11 issue.
-        marginTop: theme.spacing(1),
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2),
-    },
-}))
+  root: {
+    height: '100vh',
+  },
+  image: {
+    backgroundImage: 'url(https://www.flaticon.com/svg/static/icons/svg/1372/1372756.svg)',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  paper: {
+    margin: theme.spacing(8, 4),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  google:{
+      marginTop:theme.spacing(6)
+  },typography:{
+    marginTop:theme.spacing(3)
+  }
+}));
 
-export default function SignIn() {
-    const classes = useStyles()
-    const [email, setemail] = useState()
-    const [password, setpassword] = useState()
+export default function SignInSide() {
+  const classes = useStyles();
     const [currentUser, setcurrentUser] = useState()
     const [status, setstatus] = useState()
-    const navigate = useNavigate()
-    let jwtToken
 
-    const HandleonSubmit = (e) => {
-        e.preventDefault()
-        auth.signInWithEmailAndPassword(email, password)
-            .then((res) => {
-                setcurrentUser(res.user)
-                console.log(res.user.uid)
-                firebase.firestore()
-                    .collection('users')
-                    .doc(`${res.user.uid}`)
-                    .get()
-                    .then(function (doc) {
-                        if (doc.exists) {
-                            setstatus(doc.data().status)
-                            localStorage.setItem("user", doc.data().status);
-                        } else {
-                            console.log('No such document!')
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log('Error getting document:', error)
-                    })
-            })
-            .catch((err) => console.log(err))
-    }
+    const auth = firebase.auth();
+    const googleProvider = new firebase.auth.GoogleAuthProvider()
 
-      if (currentUser) {
-        if(status === 'admin'){
-          return <Navigate to="/admin" state={`${currentUser.uid}`} />
-        }else if(status === 'user'){
-          return <Navigate to="/trans" state={`${currentUser.uid}`} />
+
+    const signIn = (e) => {
+                auth.signInWithPopup(e).then((res) => {
+                        firebase.firestore().collection("users").doc(res.user.uid).set({
+                            fname:"",
+                            lname:"",
+                            userID:res.user.uid,
+                            email:res.user.email,
+                            status:"user"
+                        })
+                        .then(function() {
+                            setcurrentUser(res.user)
+                            firebase
+                            .firestore()
+                            .collection('users')
+                            .doc(`${res.user.uid}`)
+                            .get()
+                            .then(function (doc) {
+                                if (doc.exists) {
+                                    setstatus(doc.data().status)
+                                    localStorage.setItem('user', doc.data().status)
+                                } else {
+                                    console.log('No such document!')
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log('Error getting document:', error)
+                            })
+        
+                        })
+                        .catch(function(error) {
+                            console.error("Error writing document: ", error);
+                        });
+        
+                        
+                }).catch((error) => {
+                  console.log(error.message)
+                })
+              }
+
+    if (currentUser) {
+        if (status === 'admin') {
+            return <Navigate to="/admin" state={`${currentUser.uid}`} />
+        } else if (status === 'user') {
+            return <Navigate to="/trans" state={`${currentUser.uid}`} />
         }
-
     }
-    return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
-                    Sign in
-                </Typography>
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    autoFocus
-                    onChange={(e) => {
-                        setemail(e.target.value)
-                    }}
-                />
-                <TextField
-                    variant="outlined"
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="current-password"
-                    onChange={(e) => {
-                        setpassword(e.target.value)
-                    }}
-                />
-                <FormControlLabel
-                    control={<Checkbox value="remember" color="primary" />}
-                    label="Remember me"
-                />
-                <Button
-                    type="button"
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    className={classes.submit}
-                    onClick={(e) => {
-                        HandleonSubmit(e)
-                    }}
-                >
-                    Sign In
-                </Button>
-                <Grid container>
-                    <Grid item xs>
-                        <Link href="#" variant="body2">
-                            Forgot password?
-                        </Link>
-                    </Grid>
-                    <Grid item>
-                        <Link
-                            variant="body2"
-                            onClick={() => {
-                                navigate('/app/signup')
-                            }}
-                        >
-                            {"Don't have an account? Sign Up"}
-                        </Link>
-                    </Grid>
-                </Grid>
-            </div>
-            <Box mt={8}>
-                <Copyright />
+
+  return (
+    <Grid container component="main" className={classes.root}>
+      <CssBaseline />
+      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+           <Typography className={classes.typography}>
+
+Website for all languages ​​for learning.
+           </Typography>
+          <GoogleButton className={classes.google} onClick={e=>{signIn(googleProvider)}}/>
+            
+            <Box mt={20}>
+              <Copyright />
             </Box>
-        </Container>
-    )
+        </div>
+      </Grid>
+    </Grid>
+  );
 }

@@ -61,7 +61,6 @@ const getData = (id) =>{
     .then(function (doc) {
         if (doc.exists) {
             getImage(doc.data().imageName)
-            // console.log(doc.data())
         } else {
             console.log('No such document!')
         }
