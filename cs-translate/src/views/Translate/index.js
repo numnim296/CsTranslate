@@ -16,7 +16,7 @@ import NavigationIcon from '@material-ui/icons/Navigation'
 import Snackbar from '@material-ui/core/Snackbar'
 import Slide from '@material-ui/core/Slide'
 import jwt_decode from "jwt-decode";
-
+import { Navigate } from "react-router-dom";
 
   
   function TransitionUp(props) {
@@ -65,15 +65,17 @@ function MainPage() {
     const [open, setOpen] = React.useState(false)
     const [transition, setTransition] = React.useState(undefined);
     const [suggess, setsuggess] = useState("")
-    const token = localStorage.usertoken;
-    const decoded = jwt_decode(token);
-    console.log('decoded => ',decoded)
+    const userId = location.state
+    const token = localStorage.user;
+    console.log("hello",token)
+    const [uid, setuid] = useState("")
 
   const handleClick = (Transition) => () => {
     setTransition(() => Transition);
     setOpen(true);
   };
 
+   
   const handleClose = () => {
     setOpen(false);
   };
@@ -95,7 +97,7 @@ function MainPage() {
         fetchApi()
     }
     function toHistory() {
-        navigate('/history', { state: `${location.state}` })
+        navigate('/history', { state: `${uid}` })
     }
 
     function handleOnChange(e) {
@@ -109,7 +111,7 @@ function MainPage() {
             .set({
                 destinationLanguage: trancomplete,
                 sourceLanguage: tran,
-                userID: location.state,
+                userID: uid,
             })
             .then(function () {
                 console.log('add history complete')
@@ -121,6 +123,8 @@ function MainPage() {
 
     useEffect(() => {
         let mounted = true
+        jwtToken()
+
         socket.on('new-message', (messageNew) => {
             setsuggess(messageNew)
             setTransition(() => TransitionUp);
@@ -133,7 +137,17 @@ function MainPage() {
         }
     }, [])
 
+    const jwtToken = () =>{
+        firebase.auth().onAuthStateChanged(function(user) {
+              if (user) {
+                setuid(user.uid)
+                console.log('koko',user)
+              }
+            });
+      }
+
    
+if(localStorage.user===undefined || localStorage.user==="user"){
 
     return (
         <div className={classes.position}>
@@ -2686,6 +2700,11 @@ function MainPage() {
             
         </div>
     )
+
+}else if(localStorage.user==="admin"){
+    return <Navigate to="/admin" />;
+}
+   
 }
 
 export default MainPage

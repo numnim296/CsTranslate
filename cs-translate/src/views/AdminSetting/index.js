@@ -11,8 +11,9 @@ import { db } from '../../firebase'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
-import { useLocation } from 'react-router'
+import { useLocation,Navigate } from 'react-router'
 import * as firebase from 'firebase/app'
+import swal from "sweetalert";
 
 const useStyles = makeStyles((theme) => ({
     avatarImage: {
@@ -29,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Setting() {
     const classes = useStyles()
     const location = useLocation()
-    const userid = location.state
+    // const userid = location.state
+    const [userid, setuserid] = useState("")
     const storage = firebase.storage()
     console.log('ggg', userid)
     const [imageUrl, setimageUrl] = useState("")
@@ -39,6 +41,7 @@ export default function Setting() {
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [uid, setuid] = useState("")
 
     const [fileInputState, setFileInputState] = useState('')
     const [previewSource, setPreviewSource] = useState('')
@@ -67,9 +70,19 @@ export default function Setting() {
             })
     }
 
-    useEffect(() => {
+    const jwtToken = () =>{
+        firebase.auth().onAuthStateChanged(function(user) {
+              if (user) {
+                  setuserid(user.uid)
+                setuid(user.uid)
+                getData(user.uid)
+              }
+            });
+      }
+
+      const getData = (id) =>{
         db.collection('users')
-            .doc(`${userid}`).get()
+            .doc(`${id}`).get()
             .then(function (doc) {
                 if (doc.exists) {
                     setFistName(doc.data().fname)
@@ -84,6 +97,13 @@ export default function Setting() {
             .catch(function (error) {
                 console.log('Error getting document:', error)
             })
+      }
+
+
+   
+
+    useEffect(() => {
+        jwtToken()
     }, [])
 
 
@@ -105,10 +125,32 @@ export default function Setting() {
             imageName:selectedFile.name
         })
         .then(function () {
-            console.log('edit imageName complete')
+            swal({
+                title: "success",
+                text: "  ",
+                icon: "success",
+                timer: 1800,
+                showConfirmButton: false,
+                button: false
+            }).then(() => {
+                setTimeout(() => {
+                    window.location.reload(false);
+                }, 200);
+            });
         })
         .catch(function (error) {
-            console.error('Error writing document: ', error)
+            swal({
+                title: "ไม่สามารถแก้ไขได้โปรดลองอีกครั้ง",
+                text: "  ",
+                icon: "error",
+                timer: 1800,
+                showConfirmButton: false,
+                button: false
+            }).then(() => {
+                setTimeout(() => {
+                    window.location.reload(false);
+                }, 200);
+            });
         })
     }
 
@@ -122,58 +164,40 @@ export default function Setting() {
             lname:lastName,
         })
         .then(function () {
-            console.log('edit user complete')
+            swal({
+                title: "success",
+                text: "  ",
+                icon: "success",
+                timer: 1800,
+                showConfirmButton: false,
+                button: false
+            }).then(() => {
+                setTimeout(() => {
+                    window.location.reload(false);
+                }, 200);
+            });
         })
         .catch(function (error) {
-            console.error('Error writing document: ', error)
+            swal({
+                title: "ไม่สามารถแก้ไขได้โปรดลองอีกครั้ง",
+                text: "  ",
+                icon: "error",
+                timer: 1800,
+                showConfirmButton: false,
+                button: false
+            }).then(() => {
+                setTimeout(() => {
+                    window.location.reload(false);
+                }, 200);
+            });
         })
     }
       
-    return (
+
+    if (localStorage.user === 'admin') {
+        return (
         <div>
-            {/* <Typography align="center">
-                {previewSource !== '' ? (
-                    // <img src={previewSource} width="170"></img>
-                    <Avatar
-                    src={previewSource}
-                    className={classes.avatarImage}
-                />
-                ) : (
-                    <div>
-                        <Avatar
-                            src={imageUrl}
-                            className={classes.avatarImage}
-                        />
-                    </div>
-                )}
-            </Typography>
-            <Typography align="center">
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    component="label"
-                    className={classes.chooseImage}
-                    onChange={(e) => {
-                        handleFileInputChange(e)
-                    }}
-                    value={fileInputState}
-                >
-                    เลือกรูปภาพ
-                    <input
-                        type="file"
-                        style={{
-                            display: 'none',
-                        }}
-                    />
-                </Button>
-            </Typography>
-            <Button
-                onClick={(e) => {
-                    handleClickUpdate(e)
-                }}
-            >
-                บันทึก
-            </Button> */}
+            
 
                 <Card>
                 <CardHeader subheader="Profile" />
@@ -296,4 +320,13 @@ export default function Setting() {
                         </Card>
         </div>
     )
+    } else if (localStorage.user === 'user') {
+        return <Navigate to="/setting"></Navigate>
+    } else {
+        return <Navigate to="/app/login"></Navigate>
+    }
+
+
+
+    
 }

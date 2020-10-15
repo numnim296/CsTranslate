@@ -71,6 +71,7 @@ export default function SignIn() {
                     .then(function (doc) {
                         if (doc.exists) {
                             setstatus(doc.data().status)
+                            localStorage.setItem("user", doc.data().status);
                         } else {
                             console.log('No such document!')
                         }

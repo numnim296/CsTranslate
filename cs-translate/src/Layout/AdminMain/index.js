@@ -41,6 +41,7 @@ export default function MainAppBar() {
   const open = Boolean(anchorEl);
   const [uid, setuid] = useState("")
   const [imageUrl, setimageUrl] = useState("")
+  console.log(localStorage.user)
 
 
 
@@ -51,7 +52,6 @@ export default function MainAppBar() {
   };
 
   const logIn = () => {
-    // localStorage.removeItem("usertoken");
     navigate(`/app/login`);
 };
 
@@ -101,6 +101,7 @@ const gotoTran = () =>{
 }
 
 const logOut = ()=>{
+  localStorage.removeItem('user')
     firebase.auth().signOut().then(
         navigate(`/app/login`)
     )

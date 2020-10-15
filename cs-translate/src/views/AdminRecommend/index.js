@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { makeStyles, TextField, Button, Typography } from '@material-ui/core'
 import socketIOClient from 'socket.io-client'
 
+import swal from "sweetalert";
+
+
 const useStyles = makeStyles((theme) => ({
     TextFieldclass: {
         marginTop: theme.spacing(10),
@@ -22,6 +25,18 @@ export default function Recommend() {
 
 
         socket.emit('sent-message', vocab)
+        swal({
+            title: "You have successfully introduced",
+            text: "  ",
+            icon: "success",
+            timer: 1800,
+            showConfirmButton: false,
+            button: false
+        }).then(() => {
+            setTimeout(() => {
+                
+            }, 200);
+        });
     }
 
     return (
@@ -29,7 +44,7 @@ export default function Recommend() {
             <TextField
                 className={classes.TextFieldclass}
                 id="outlined-multiline-static"
-                label="คำศัพท์ที่อยากจะแนะนำ"
+                label="Words that would like to introduce"
                 multiline
                 rows={8}
                 variant="outlined"
@@ -51,7 +66,7 @@ export default function Recommend() {
                         }
                     }
                 >
-                    แนะนำ
+                    introduce
                 </Button>
             </Typography>
         </div>

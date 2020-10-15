@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import {  db } from '../../firebase'
+import { db } from '../../firebase'
 import 'firebase/firestore'
 import 'firebase/auth'
 import 'firebase/storage'
-import { useLocation } from 'react-router'
+import { useLocation, Navigate } from 'react-router'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Divider from '@material-ui/core/Divider'
+import * as firebase from 'firebase/app'
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -39,11 +40,19 @@ export default function History() {
     const classes = useStyles()
     const location = useLocation()
     const [historyData, sethistoryData] = useState([])
-    const userid = location.state
+    const [uid, setuid] = useState("")
+    const jwtToken = () =>{
+        firebase.auth().onAuthStateChanged(function(user) {
+              if (user) {
+                setuid(user.uid)
+                getData(user.uid)
+              }
+            });
+      }
 
-    useEffect(() => {
+      const getData = (id) =>{
         db.collection('historyTranslate')
-            .where('userID', '==', userid)
+            .where('userID', '==', id)
             .get()
             .then(function (querySnapshot) {
                 querySnapshot.forEach(function (doc) {
@@ -54,25 +63,35 @@ export default function History() {
             .catch(function (error) {
                 console.log('Error getting documents: ', error)
             })
+      }
+
+    useEffect(() => {
+        jwtToken()
     }, [])
 
-    return (
-        <List
-            component="nav"
-            className={classes.root}
-            aria-label="mailbox folders"
-        >
-            {historyData.map((res) => (
-                <div>
-                    <ListItem button>
-                        <ListItemText
-                            primary={res.sourceLanguage}
-                            secondary={res.destinationLanguage}
-                        />
-                    </ListItem>
-                    <Divider />
-                </div>
-            ))}
-        </List>
-    )
+    if (localStorage.user === 'user') {
+        return (
+            <List
+                component="nav"
+                className={classes.root}
+                aria-label="mailbox folders"
+            >
+                {historyData.map((res) => (
+                    <div>
+                        <ListItem button>
+                            <ListItemText
+                                primary={res.sourceLanguage}
+                                secondary={res.destinationLanguage}
+                            />
+                        </ListItem>
+                        <Divider />
+                    </div>
+                ))}
+            </List>
+        )
+    } else if (localStorage.user === 'admin') {
+        return <Navigate to="/admin/history"></Navigate>
+    } else {
+        return <Navigate to="/app/login"></Navigate>
+    }
 }
