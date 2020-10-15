@@ -1,14 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import socketIOClient from 'socket.io-client'
 
 import { makeStyles } from '@material-ui/core/styles'
-import {
-    TextField,
-    Button,
-    Typography,
-    Box,
-    Grid,
-} from '@material-ui/core'
+import { TextField, Button, Typography, Box, Grid } from '@material-ui/core'
 import Popover from '@material-ui/core/Popover'
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state'
 import { useNavigate, useLocation } from 'react-router'
@@ -18,6 +13,15 @@ import 'firebase/auth'
 import 'firebase/storage'
 
 import NavigationIcon from '@material-ui/icons/Navigation'
+import Snackbar from '@material-ui/core/Snackbar'
+import Slide from '@material-ui/core/Slide'
+import jwt_decode from "jwt-decode";
+
+
+  
+  function TransitionUp(props) {
+    return <Slide {...props} direction="up" />;
+  }
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -47,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
     },
 }))
 
-
 function MainPage() {
     const classes = useStyles()
     const [traned, setTraned] = useState('')
@@ -57,8 +60,23 @@ function MainPage() {
     const [FullTarget, setFullTarget] = useState('Thai')
     const [FullSource, setFullSource] = useState('English')
     const location = useLocation()
-    const navigate = useNavigate();
-    console.log("kjki",location.state)
+    const navigate = useNavigate()
+    const socket = socketIOClient('http://localhost:4030')
+    const [open, setOpen] = React.useState(false)
+    const [transition, setTransition] = React.useState(undefined);
+    const [suggess, setsuggess] = useState("")
+    const token = localStorage.usertoken;
+    const decoded = jwt_decode(token);
+    console.log('decoded => ',decoded)
+
+  const handleClick = (Transition) => () => {
+    setTransition(() => Transition);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
     function fetchAPI(e) {
         e.preventDefault()
@@ -76,9 +94,8 @@ function MainPage() {
 
         fetchApi()
     }
-    function toHistory(){
-        navigate('/history',{state:`${location.state}`})
-
+    function toHistory() {
+        navigate('/history', { state: `${location.state}` })
     }
 
     function handleOnChange(e) {
@@ -102,6 +119,22 @@ function MainPage() {
             })
     }
 
+    useEffect(() => {
+        let mounted = true
+        socket.on('new-message', (messageNew) => {
+            setsuggess(messageNew)
+            setTransition(() => TransitionUp);
+            setOpen(true);
+            console.log('แจ้งเตือน', messageNew)
+        })
+
+        return () => {
+            mounted = false
+        }
+    }, [])
+
+   
+
     return (
         <div className={classes.position}>
             <PopupState variant="popover" popupId="demo-popup-popover">
@@ -124,9 +157,7 @@ function MainPage() {
                             </Grid>
                         </Grid>
 
-                        <Popover
-                            {...bindPopover(popupState)}
-                        >
+                        <Popover {...bindPopover(popupState)}>
                             <Box p={20}>
                                 <Grid container spacing={3}>
                                     <Grid item xs={6} sm={3}>
@@ -2643,6 +2674,16 @@ function MainPage() {
             >
                 History
             </Button>
+
+      <Snackbar
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={transition}
+        message={suggess}
+        key={transition ? transition.name : ''}
+      />
+            
+            
         </div>
     )
 }
