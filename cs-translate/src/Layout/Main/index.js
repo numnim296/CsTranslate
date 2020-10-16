@@ -103,9 +103,11 @@ const gotoTran = () =>{
 const logOut = ()=>{
   localStorage.removeItem('user')
     firebase.auth().signOut().then(
-      navigate(`/app/login`)
+      
+      localStorage.removeItem('user')
+
   
-  )
+  ).then(navigate(`/app/login`))
 
 }
 

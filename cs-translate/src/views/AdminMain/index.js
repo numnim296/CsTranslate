@@ -1,6 +1,10 @@
 import React from 'react'
-import { makeStyles, Grid, Typography, Button } from '@material-ui/core'
+import { makeStyles, Grid, Typography, Button ,IconButton} from '@material-ui/core'
 import { useLocation, useNavigate,Navigate } from 'react-router'
+// import transImage from '../../images/trans.jpg'
+// import suggestImage from '../../images/suggess.jpg'
+import transImage from '../../images/1.png'
+import suggestImage from '../../images/2.png'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -28,7 +32,7 @@ export default function MainPage() {
                 </Grid>
                 <Grid item xs={12} sm={4}>
                     <Typography align="center">
-                        <Button
+                        {/* <Button
                             style={{
                                 maxWidth: '300px',
                                 maxHeight: '300px',
@@ -44,12 +48,23 @@ export default function MainPage() {
                             }}
                         >
                             Translate
-                        </Button>
+                        </Button> */}
+
+                        <IconButton onClick={e=>{
+                                gotoOtherPage('trans')
+                            }}>
+                            <img src={transImage} style={{
+                                maxWidth: '470px',
+                                maxHeight: '470px',
+                                minWidth: '470px',
+                                minHeight: '470px',
+                            }}/>
+                        </IconButton>
                     </Typography>
                 </Grid>
                 <Grid item xs={12} sm={4}>
                     <Typography align="center">
-                        <Button
+                        {/* <Button
                             style={{
                                 maxWidth: '300px',
                                 maxHeight: '300px',
@@ -66,7 +81,18 @@ export default function MainPage() {
                             }}
                         >
                             Suggest words
-                        </Button>
+                        </Button> */}
+                        <IconButton onClick={e=>{
+                                gotoOtherPage('recommend')
+    
+                            }}>
+                            <img src={suggestImage} style={{
+                                maxWidth: '470px',
+                                maxHeight: '470px',
+                                minWidth: '470px',
+                                minHeight: '470px',
+                            }}/>
+                        </IconButton>
                     </Typography>
                 </Grid>
                 <Grid item xs={12} sm={2}>

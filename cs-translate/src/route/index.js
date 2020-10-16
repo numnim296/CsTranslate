@@ -46,7 +46,6 @@ const routes = [
         children: [
             { path: '/', element: <LogIn /> },
             { path: 'login', element: <LogIn /> },
-            // { path: 'signup', element: <SignUp /> },
             { path: '*', element: <Navigate to="/404" /> },
         ],
     },
